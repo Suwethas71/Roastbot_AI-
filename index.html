@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roastmaster.ai 😎</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    /* Global text rules (avoid breaking words mid-word) */
+    body {
+      word-break: normal;
+      overflow-wrap: normal;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top left, #ff4d4d 0, #1b1b1b 45%),
+        radial-gradient(circle at bottom right, #4a90e2 0, #000 50%);
+      color: #fff;
+      padding: 16px;
+    }
+
+    .app-shell {
+      width: min(1120px, 100%);
+      max-height: 90vh;
+      display: grid;
+      grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+      gap: 1px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #ffffff33, #00000055);
+      padding: 1px;
+      box-shadow: 0 24px 80px #000000aa;
+      backdrop-filter: blur(14px);
+    }
+
+    .panel {
+      background: radial-gradient(circle at top left, #2a2a2a 0, #111 55%);
+      border-radius: 24px 0 0 24px;
+      padding: 22px 20px;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #ffffff11;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: conic-gradient(from 200deg, #ff4d4d, #ffb84d, #4a90e2, #ff4d4d);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 0 0 2px #00000077;
+    }
+
+    .brand-text-main {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .brand-text-sub {
+      font-size: 0.78rem;
+      color: #b3b3b3;
+    }
+
+    .status-pill {
+      font-size: 0.75rem;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #10b98122;
+      color: #6ee7b7;
+      border: 1px solid #10b98155;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background-color: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      color: #d4d4d4;
+      border: 1px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.05s,
+        color 0.15s;
+    }
+
+    .nav-item span.icon {
+      font-size: 1.1rem;
+    }
+
+    .nav-item.active {
+      background: radial-gradient(circle at top left, #ff4d4d55, #111);
+      border-color: #ff4d4d77;
+      color: #fff;
+    }
+
+    .nav-item:hover {
+      background: #ffffff10;
+      transform: translateY(-1px);
+    }
+
+    .panel-divider-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #737373;
+      margin: 10px 0 8px;
+    }
+
+    .preset-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .chip {
+      font-size: 0.78rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #ffffff26;
+      background: #ffffff08;
+      color: #e5e5e5;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.05s;
+    }
+
+    .chip:hover {
+      background: #ffffff18;
+      border-color: #ffffff55;
+      transform: translateY(-0.5px);
+    }
+
+    .chip span {
+      opacity: 0.7;
+      margin-left: 2px;
+    }
+
+    .tip-card {
+      margin-top: auto;
+      padding: 12px 11px;
+      border-radius: 18px;
+      border: 1px solid #ffffff14;
+      background: radial-gradient(circle at top left, #ff4d4d22, #111);
+      font-size: 0.78rem;
+      color: #e5e5e5;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .tip-title {
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    .tip-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      opacity: 0.7;
+    }
+
+    .tip-badge {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid #ffffff33;
+    }
+
+    /* Chat area */
+    .chat-panel {
+      background: radial-gradient(circle at top, #262626 0, #050505 52%);
+      border-radius: 0 24px 24px 0;
+      padding: 18px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #ffffff14;
+    }
+
+    .chat-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .chat-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .chat-subtitle {
+      font-size: 0.8rem;
+      color: #b3b3b3;
+    }
+
+    .tiny-metrics {
+      display: flex;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: #a3a3a3;
+    }
+
+    .tiny-metrics span {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .chat-window {
+      flex: 1;
+      margin-top: 4px;
+      padding: 10px 2px 8px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .msg-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .msg-row.user {
+      justify-content: flex-end;
+    }
+
+    .msg-row.bot {
+      justify-content: flex-start;
+    }
+
+    /* Ensure bubbles hug correct side */
+    .msg-row.user > div {
+      text-align: right;
+    }
+
+    .msg-row.bot > div {
+      text-align: left;
+    }
+
+    .msg-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: #18181b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      box-shadow: 0 0 0 1px #ffffff22;
+      flex-shrink: 0;
+    }
+
+    .msg-avatar.bot {
+      background: radial-gradient(circle at top left, #ff4d4d, #111);
+    }
+
+    .bubble-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .bubble-wrap.user {
+      align-items: flex-end;
+    }
+
+    .bubble-wrap.bot {
+      align-items: flex-start;
+    }
+
+    .message {
+      max-width: min(72%, 560px);
+      min-width: 0;
+      padding: 9px 12px;
+      border-radius: 16px;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      word-break: keep-all;
+      overflow-wrap: break-word; /* only breaks if absolutely needed */
+      hyphens: none;
+      white-space: pre-wrap;
+      display: inline-block;
+      width: fit-content;
+    }
+
+    .message.bot {
+      background: #18181b;
+      border: 1px solid #ffffff18;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message.user {
+      background: linear-gradient(135deg, #4a90e2, #2563eb);
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg-meta {
+      font-size: 0.68rem;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+
+    .typing-row {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-left: 36px;
+      margin-top: 4px;
+    }
+
+    .typing-dots {
+      display: inline-flex;
+      gap: 4px;
+    }
+
+    .typing-dots span {
+      width: 5px;
+      height: 5px;
+      border-radius: 999px;
+      background-color: #9ca3af;
+      animation: pulse 1s infinite ease-in-out;
+    }
+
+    .typing-dots span:nth-child(2) {
+      animation-delay: 0.12s;
+    }
+
+    .typing-dots span:nth-child(3) {
+      animation-delay: 0.24s;
+    }
+
+    @keyframes pulse {
+      0%,
+      100% {
+        transform: translateY(0);
+        opacity: 0.4;
+      }
+      50% {
+        transform: translateY(-3px);
+        opacity: 1;
+      }
+    }
+
+    /* Input area */
+    .input-bar {
+      margin-top: 6px;
+      padding-top: 8px;
+      border-top: 1px solid #ffffff14;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background: #020617;
+      border-radius: 999px;
+      border: 1px solid #ffffff22;
+      padding-right: 6px;
+    }
+
+    .input-wrapper:focus-within {
+      border-color: #ff4d4d88;
+      box-shadow: 0 0 0 1px #ff4d4d55;
+    }
+
+    .input-prefix {
+      font-size: 0.8rem;
+      padding-left: 10px;
+      padding-right: 6px;
+      color: #6b7280;
+      user-select: none;
+    }
+
+    .input-main {
+      border: none;
+      outline: none;
+      background: transparent;
+      color: #e5e5e5;
+      padding: 8px 4px 8px 0;
+      font-size: 0.9rem;
+      width: 100%;
+    }
+
+    .input-main::placeholder {
+      color: #4b5563;
+    }
+
+    .input-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 2px;
+    }
+
+    .icon-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      border: none;
+      background: #020617;
+      color: #9ca3af;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.15s, color 0.15s, transform 0.05s;
+    }
+
+    .icon-btn:hover {
+      background: #111827;
+      color: #e5e5e5;
+      transform: translateY(-0.5px);
+    }
+
+    .send-btn {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #ff4d4d, #f97316);
+      color: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.06s, box-shadow 0.12s, filter 0.12s,
+        opacity 0.12s;
+      box-shadow: 0 10px 24px #00000090;
+    }
+
+    .send-btn span.icon {
+      font-size: 0.95rem;
+    }
+
+    .send-btn:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+      box-shadow: 0 18px 32px #000000aa;
+    }
+
+    .send-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 8px 18px #000000aa;
+    }
+
+    .send-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .helper-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.74rem;
+      color: #6b7280;
+      padding: 0 4px;
+    }
+
+    .helper-row span.kbd {
+      border-radius: 6px;
+      padding: 1px 5px;
+      border: 1px solid #4b5563;
+      font-size: 0.7rem;
+      color: #9ca3af;
+      background: #020617;
+    }
+
+    .helper-row a {
+      color: #9ca3af;
+      text-decoration: none;
+    }
+
+    .helper-row a:hover {
+      color: #e5e5e5;
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 840px) {
+      .app-shell {
+        grid-template-columns: minmax(0, 1fr);
+        max-height: none;
+      }
+
+      .panel {
+        border-radius: 20px 20px 0 0;
+        flex-direction: row;
+        align-items: center;
+        gap: 14px;
+        border-right: none;
+        border-bottom: 1px solid #ffffff11;
+        padding: 14px 16px;
+      }
+
+      .nav,
+      .panel-divider-label,
+      .preset-chips,
+      .tip-card {
+        display: none;
+      }
+
+      .chat-panel {
+        border-radius: 0 0 20px 20px;
+        padding: 14px 12px 12px;
+      }
+
+      .chat-window {
+        padding-right: 4px;
+      }
+
+      .message {
+        max-width: 90%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 8px;
+      }
+
+      .app-shell {
+        border-radius: 18px;
+      }
+
+      .chat-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+
+      .send-btn span.label {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Left panel -->
+    <section class="panel">
+      <div class="panel-header">
+        <div class="brand">
+          <div class="brand-logo">😎</div>
+          <div>
+            <div class="brand-text-main">Roastmaster.ai</div>
+            <div class="brand-text-sub">Instant ego destruction, gently.</div>
+          </div>
+        </div>
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          Live
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Main">
+        <button class="nav-item active" type="button">
+          <span class="icon">🔥</span>
+          <span>Live Roast</span>
+        </button>
+        <button class="nav-item" type="button">
+          <span class="icon">📜</span>
+          <span>History</span>
+        </button>
+        <button class="nav-item" type="button">
+          <span class="icon">⚙️</span>
+          <span>Settings</span>
+        </button>
+        <button class="nav-item" type="button">
+          <span class="icon">👤</span>
+          <span>Profile</span>
+        </button>
+      </nav>
+
+      <div class="panel-divider-label">Roast ideas</div>
+      <div class="preset-chips">
+        <button class="chip" type="button" data-prompt="Roast my coding skills.">
+          Dev mode<span>•</span>Code skills
+        </button>
+        <button class="chip" type="button" data-prompt="Roast my personality.">
+          Psycho roast<span>•</span>Personality
+        </button>
+        <button class="chip" type="button" data-prompt="Roast my fashion sense.">
+          Fit check<span>•</span>Outfit
+        </button>
+        <button class="chip" type="button" data-prompt="Roast my LinkedIn bio.">
+          LinkedIn cringe<span>•</span>Bio
+        </button>
+      </div>
+
+      <article class="tip-card">
+        <div class="tip-title">Pro tip</div>
+        <p>
+          The more details you give, the more personal (and painful) the roast
+          gets. Share hobbies, habits, or your worst decisions.
+        </p>
+        <div class="tip-footer">
+          <span class="tip-badge">PG‑13 by default</span>
+          <span>Type "go savage" to uncap.</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- Chat panel -->
+    <section class="chat-panel">
+      <header class="chat-header">
+        <div class="chat-title-block">
+          <div class="chat-title">Live roast session</div>
+          <p class="chat-subtitle">
+            Tell me about yourself. I’ll do the rest.
+          </p>
+        </div>
+        <div class="tiny-metrics">
+          <span>⚡ <span id="latency-label">Ready</span></span>
+          <span>💬 <span id="msg-count">1</span> lines burned</span>
+        </div>
+      </header>
+
+      <div
+        class="chat-window"
+        id="chat-window"
+        aria-label="Roast conversation"
+        aria-live="polite"
+      >
+        <div class="msg-row bot">
+          <div class="msg-avatar bot">😎</div>
+          <div>
+            <div class="message bot">
+              Welcome to Roastmaster.ai. Describe yourself in one sentence and
+              I'll describe your whole personality in one paragraph.
+            </div>
+            <div class="msg-meta">Roastmaster • just now</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="typing-row" id="typing-row">
+        <span class="typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+        <span style="font-size: 0.78rem; color: #9ca3af">Roastmaster is thinking…</span>
+      </div>
+
+      <form class="input-bar" id="chat-form" autocomplete="off">
+        <div class="input-row">
+          <div class="input-wrapper">
+            <span class="input-prefix">➤</span>
+            <input
+              type="text"
+              id="input"
+              class="input-main"
+              placeholder="Type your confession, insecurity, or life choices here…"
+              autocomplete="off"
+            />
+            <div class="input-actions">
+              <button type="button" class="icon-btn" title="Insert sample prompt" id="sample-btn">
+                ✨
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="send-btn" id="send" disabled>
+            <span class="icon">📨</span>
+            <span class="label">Roast me</span>
+          </button>
+        </div>
+        <div class="helper-row">
+          <span>
+            Press <span class="kbd">Enter</span> to send &nbsp;•&nbsp; The bot is
+            sarcastic, not psychic – give it material.
+          </span>
+          <span>
+            Made with questionable life choices
+          </span>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- JavaScript to connect backend -->
+  <script>
+    const chatWindow = document.getElementById("chat-window");
+    const input = document.getElementById("input");
+    const sendBtn = document.getElementById("send");
+    const chatForm = document.getElementById("chat-form");
+    const typingRow = document.getElementById("typing-row");
+    const msgCountEl = document.getElementById("msg-count");
+    const latencyLabel = document.getElementById("latency-label");
+    const sampleBtn = document.getElementById("sample-btn");
+
+    let msgCount = 1;
+
+    function updateMsgCount() {
+      msgCountEl.textContent = String(msgCount);
+    }
+
+    function setSendEnabled() {
+      const hasText = input.value.trim().length > 0;
+      sendBtn.disabled = !hasText;
+    }
+
+    function appendMessage(text, sender = "bot") {
+      msgCount += 1;
+      updateMsgCount();
+
+      const row = document.createElement("div");
+      row.className = `msg-row ${sender}`;
+
+      const avatar = document.createElement("div");
+      avatar.className = `msg-avatar ${sender === "bot" ? "bot" : ""}`;
+      avatar.textContent = sender === "bot" ? "😎" : "👤";
+
+      const bubbleWrapper = document.createElement("div");
+      bubbleWrapper.className = `bubble-wrap ${sender}`;
+
+      const bubble = document.createElement("div");
+      bubble.className = `message ${sender}`;
+      bubble.textContent = text;
+
+      const meta = document.createElement("div");
+      meta.className = "msg-meta";
+      meta.textContent =
+        (sender === "bot" ? "Roastmaster" : "You") + " • just now";
+
+      bubbleWrapper.appendChild(bubble);
+      bubbleWrapper.appendChild(meta);
+
+      if (sender === "bot") {
+        row.appendChild(avatar);
+        row.appendChild(bubbleWrapper);
+      } else {
+        row.appendChild(bubbleWrapper);
+        row.appendChild(avatar);
+      }
+
+      chatWindow.appendChild(row);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function setTyping(visible) {
+      typingRow.style.display = visible ? "flex" : "none";
+    }
+
+    async function sendMessage() {
+      const userText = input.value.trim();
+      if (!userText) return;
+
+      const startTime = performance.now();
+      latencyLabel.textContent = "Thinking…";
+
+      appendMessage(userText, "user");
+      input.value = "";
+      setSendEnabled();
+      setTyping(true);
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: userText }),
+        });
+
+        const elapsed = performance.now() - startTime;
+        const seconds = (elapsed / 1000).toFixed(1);
+        latencyLabel.textContent = `${seconds}s`;
+
+        const data = await response.json();
+        const reply =
+          data && typeof data.reply === "string"
+            ? data.reply
+            : "Even I’m speechless. That’s rare.";
+
+        appendMessage(reply, "bot");
+      } catch (error) {
+        latencyLabel.textContent = "Error";
+        appendMessage(
+          "I tried to roast you but the backend dipped. Fix your server before fixing your life choices.",
+          "bot"
+        );
+      } finally {
+        setTyping(false);
+      }
+    }
+
+    chatForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      sendMessage();
+    });
+
+    input.addEventListener("input", setSendEnabled);
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    sampleBtn.addEventListener("click", () => {
+      if (!input.value.trim()) {
+        input.value = "Roast me like a junior dev who just pushed to main on Friday.";
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
+        setSendEnabled();
+      }
+    });
+
+    // preset chips
+    document.querySelectorAll(".chip[data-prompt]").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const prompt = chip.getAttribute("data-prompt");
+        if (prompt) {
+          input.value = prompt;
+          input.focus();
+          input.setSelectionRange(input.value.length, input.value.length);
+          setSendEnabled();
+        }
+      });
+    });
+
+    // initial state
+    setSendEnabled();
+    updateMsgCount();
+  </script>
+</body>
+</html>
